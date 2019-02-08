@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pkexec --user root /usr/bin/wifiscanner
