@@ -1,0 +1,82 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="title">WifiScanner</property>
+    <property name="border-width">10</property>
+    <child>
+      <object id="grid" class="GtkGrid">
+        <property name="visible">True</property>
+        <child>
+          <object id="button1" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label">2,4Ghz</property>
+            <property name="vexpand">False</property>
+
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object id="place3" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label">Shot</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="button2" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label">5Ghz</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="quit" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label">Quit</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+            <property name="width">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="imagecontainer" class="GtkDrawingArea">
+            <property name="visible">True</property>
+	    <property name="app-paintable">True</property>
+	    <property name="height-request">480</property>
+	    <property name="width-request">720</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="infobox" class="GtkTextView">
+            <property name="editable">False</property>
+	    <property name="visible">True</property>
+	    <property name="width-request">720</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+
+      </object>
+      <packing>
+      </packing>
+    </child>
+  </object>
+</interface>

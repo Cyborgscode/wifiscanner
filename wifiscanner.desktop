@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Name=WifiScanner
+GenericName=WifiScanner
+Comment=Scans your area for Wifi-Signals
+Exec=wifiscanner-gtk
+Icon=/usr/share/icons/Mint-Y/status/48/notification-wifi-enabled.svg
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Network;Scanner;
+Keywords=web;wifi;scanner;internet;
+
+X-Desktop-File-Install-Version=0.23
+
