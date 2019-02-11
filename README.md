@@ -18,10 +18,13 @@ if you wanne build it from scratch :
 if your done, or if you wanne take this F28 x64 build of mine, copy files to : 
 
 cp *desktop /usr/share/applications/
+
 cp *policy /usr/share/polkit-1/actions/
+
 cp *ui /usr/share/
+
 cp wifiscanner wifiscanner-gtk /usr/bin/
 
 done. 
 
-Somethings are easy ;)
+Some things are easy ;)
