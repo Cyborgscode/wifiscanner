@@ -5,14 +5,18 @@
     Date of Release: 8.2.2019
     Revision: 0.99
 
-    This SOFTWARE is provided as is. No warrenties of any sort, that it won't damage something. 
+Copyright 2019 Marius Schwarz
 
-    The use is free of charge of any private person and commercial businesses,
-    but you are limited to : 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-	- name the original author
-	- mark changes you made to the source as yours
-        - make it publically available again, free of charge ofcourse and under the same license.
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Update: 11.2.2019 - change of license to the BSD-2-clause, which grants the same rights, but is "clearer" described in native english.
 
 */
 
