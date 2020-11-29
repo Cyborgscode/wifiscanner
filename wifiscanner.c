@@ -5,18 +5,14 @@
     Date of Release: 8.2.2019
     Revision: 0.99
 
-Copyright 2019 Marius Schwarz
+    This SOFTWARE is provided as is. No warrenties of any sort, that it won't damage something. 
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    The use is free of charge of any private person and commercial businesses,
+    but you are limited to : 
 
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-Update: 11.2.2019 - change of license to the BSD-2-clause, which grants the same rights, but is "clearer" described in native english.
+	- name the original author
+	- mark changes you made to the source as yours
+        - make it publically available again, free of charge ofcourse and under the same license.
 
 */
 
@@ -42,6 +38,7 @@ int modus = 24; // 50 // 24  ( Default Scanmode )
 int scaninprogress = 0;
 GObject *infobox;
 GtkTextBuffer *infobuffer;
+double dpi;
 
 /// The real timer init, there was a reason to have it here at the beginning... 
 
@@ -87,6 +84,9 @@ GdkPixbuf *create_pixbuf(const gchar * filename) {
  */
 
 char *readPipe(char *cmd,char *buffer, int maxlen) {
+
+	memset(buffer, 0, maxlen); // clear buffer before using it, incase the new result, is smaller than the old one => crashing the app
+
 	FILE *fp;
 	fp = popen(cmd, "r");
 	if (fp == NULL) {
@@ -219,6 +219,8 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 
 	readPipe("/usr/sbin/iwlist scanning 2>/dev/null", cells, 500000);
 		
+//	printf("debug: %s\n",cells);
+		
 	// if we get a valid busy message OR the cells buffer only contains a single line, we quit.
 
 	if ( strstr( cells , "Device or resource busy") != NULL || strlen(cells) < 100 ) {
@@ -266,7 +268,7 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 
 	double bsize = 10.0;	// len of horizontal unit markers
 	double abstand = 10.0;  // general distance for the left corner of the drawarea for the vertical axis
-	double fontsize = 8;    // 
+	double fontsize = 16;    // 
 	double hnull = height-abstand-bsize-fontsize-2;	// vertical position of the x-Axis 
 	int dh = hnull-abstand;
 	int dw = width-2*abstand;
@@ -350,16 +352,40 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 	char **lines = split(cells,"\n");
 	char *channel;
 	char *essid;
-	char *level;
+	char *level = malloc(100);
 	
 	// we parse the content of iwlist scanning directly : 
 
 	int farbe = 0;
 	for(int i=0; lines[i]!=NULL ;i++) {
-		if ( strstr( lines[i], "Channel:" ) != NULL ) channel = strstr( lines[i], "Channel:" ) + strlen("Channel:");
+		if ( strstr( lines[i], "(Channel " ) != NULL ) {
+//			printf("DEBUG: Channel => %s\n", lines[i]);
+			if ( strstr( lines[i], ")") > 0 ) {
+				channel = malloc(20);
+				memset( channel, 0, 20 );
+				char *position = strstr( lines[i], "Channel " ) + strlen("Channel ");
+				if ( strlen(position) < 5 ) {
+					char *endpos = strstr( position, ")");
+					if ( endpos > position && ( endpos-position) < 5 ) {
+						strncpy(channel, position, endpos-position);
+					} else channel = position; // EMERG measure later strcmp will fail, but no exploit possible
+				} else channel = position; // EMERG measure later strcmp will fail, but no exploit possible
+			
+			} else {
+				channel = strstr( lines[i], "Channel " ) + strlen("Channel ");
+			}
+//			printf("DEBUG: Channel => |%s|\n", channel);
+			
+		}
 		if ( strstr( lines[i], "ESSID:" ) != NULL )		 essid = strstr( lines[i], "ESSID:" ) + strlen("ESSID:") ;
-		if ( strstr( lines[i], "level=" ) != NULL )		 level = strstr( lines[i], "level=" ) + strlen("level=") ;
-		if ( strstr( lines[i], "Mode:" ) != NULL ) {
+		if ( strstr( lines[i], "level=" ) != NULL ) {
+			char *von = strstr( lines[i], "level=" ) + strlen("level=");
+			if ( strlen( von ) < 100 ) {
+				memset( level, 0, strlen(von)+1 );
+				strncpy( level, von, strlen(von));
+			} else  printf("Debug: Scan: level feld zu lang => %s\n", von);
+		}
+		if ( strstr( lines[i], "Extra:fm" ) != NULL ) {
 
 			// if we hit mode: we have all we need for now
 
@@ -370,15 +396,31 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 			for(int k=0; z[k] != NULL; k++) {
 				// check, what index is the found channel on the axis .. AS channels are NOT read in a straight order.. no idea what iwlist thinks it does :(
 				if ( strcmp( z[k], channel) == 0 ) {
-				
+
+//					printf("Debug: Scan k=%0d dw=%0d dh=%0d anz=%0d abstand=%0f bsize=%0f level=%s\n",k,dw,dh,anz,abstand,bsize,level);
+
+
 					// Calculate start, mid and endpoint of the curve : 
 
 					int m =	(k+1) * (dw/anz)+abstand+bsize;
-					char **args = split(level," ");
-					int h = dh * (( 0 - atoi( args[0] ) ) +30)  / 90 ; // +30 DB because signals are weak. We strech the results displayed that way a bit.
+					char **args = split(level,"/");
+//					int h = dh * (( 0 - atoi( args[0] ) ) +30)  / 90 ; // +30 DB because signals are weak. We strech the results displayed that way a bit.
+
+					int h = 2 * dh * atoi( args[0] )/90; // FEDORA 33+AARCH64+ Iwtools version 29r26
+
+					
 					int m1=	m-(dw/anz);
 					int m2=	m+(dw/anz);
-					if ( m1 < 1 )	m1 = 1;
+					if ( modus == 24 ) {
+						// 2.4 Ghz Wifi uses 20 Mhz bandwidth => 4(+/-2) channels jammed 
+						// 2.4 Ghz 1 Channel = 5 Mhz
+					
+						m1=m-(2*dw/anz);
+						m2=m+(2*dw/anz);
+					}
+					if ( m1 < (abstand+bsize) )	m1 = abstand+bsize;
+					
+					// printf(" channel=%s  name=%s dh=%0d h=%0d level=%s m=%0d m1=%0d m2=%0d\n", channel, essid, dh, h, level, m,m1,m2);
 
 					// Set the color for this curve. We rotate the colors with ( count mod anz ). +x is needed due to rgb storage
 
@@ -387,9 +429,9 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 					// Paint curve and the name of the Wifinetworks ESSID 
 
 					cairo_stroke(cr);
-					cairo_curve_to(cr, m1,hnull , m,hnull-h, m+(dw/anz),hnull );
+					cairo_curve_to(cr, m1,hnull , m,hnull-h, m2 ,hnull );
 					cairo_stroke(cr);
-					cairo_move_to(cr, m-(fontsize/2),hnull-(h*35/100) );
+					cairo_move_to(cr, m-strlen(essid)*(fontsize/2),hnull-(h*35/100) );
 					cairo_show_text(cr, essid );
 					cairo_stroke(cr);
 					farbe++;
@@ -399,6 +441,7 @@ gboolean redraw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 	}
 	scaninprogress = 0;
 	updateMessage("Idle ...");
+//	printf("Debug: Ende Scan\n");
 
 	return FALSE;
 }
@@ -565,6 +608,8 @@ int main (int	 argc, char *argv[]) {
 
 	*/
 
+	dpi = gdk_screen_get_resolution ( gtk_window_get_screen(GTK_WINDOW(window)) );
+
 	/* Set black background */
 
 	GtkCssProvider* provider = gtk_css_provider_new();
@@ -603,6 +648,7 @@ int main (int	 argc, char *argv[]) {
 	gtk_text_view_set_top_margin (GTK_TEXT_VIEW ( infobox ), 10);
 
 	// some day in the future this will be helpful
+	updateMessage("waiting for device...");
 
 	g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(reactToResize), NULL); 
 
