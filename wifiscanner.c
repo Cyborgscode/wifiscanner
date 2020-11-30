@@ -186,13 +186,16 @@ static void reactToResize(GtkWidget *widget,gpointer	 data) {
 // write message to textbuffer and force GTK to update that textbuffer instantly
 
 void updateMessage(char *msg) {
-	gtk_text_buffer_set_text(infobuffer, msg ,-1);
-	gtk_widget_queue_draw ( GTK_WIDGET( infobox ));
+	if ( infobuffer != NULL && msg != NULL ) {
 
-	// FORCE GTK TO Update something! 
-	while (gtk_events_pending())
-		gtk_main_iteration();
+		gtk_text_buffer_set_text(infobuffer, msg ,-1);
+		gtk_widget_queue_draw ( GTK_WIDGET( infobox ));
 
+		// FORCE GTK TO Update something! 
+		while (gtk_events_pending())
+			gtk_main_iteration();
+		
+	} else printf("updateMessage(\"%s\") got a null info pointer\n", msg, infobuffer);
 }
 
 /* OK, your reached the most important part .. time to use base64 and AES256 to protect the property -- just kidding */
