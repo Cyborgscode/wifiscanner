@@ -648,7 +648,6 @@ int main (int	 argc, char *argv[]) {
 	gtk_text_view_set_top_margin (GTK_TEXT_VIEW ( infobox ), 10);
 
 	// some day in the future this will be helpful
-	updateMessage("waiting for device...");
 
 	g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(reactToResize), NULL); 
 
