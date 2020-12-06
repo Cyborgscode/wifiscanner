@@ -3,6 +3,7 @@
     <property name="visible">True</property>
     <property name="title">WifiScanner</property>
     <property name="border-width">10</property>
+    <property name="resizable">false</property>
     <child>
       <object id="grid" class="GtkGrid">
         <property name="visible">True</property>
