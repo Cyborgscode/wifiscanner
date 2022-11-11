@@ -33,6 +33,9 @@ Some are not: check the desktopfile for the icon and change it, to your default 
 ## Confirmed working installations:  
 
 F34 Pinephone AARCH64 build  ( 2.4 Ghz only, due to cheap pinephone chips / the gtk wrapper is not needed as no polkit is installed )  
-F32 Surface   x86_64  build  
-F30-31 ACER Esquire x86_64 build  
+F32-36 Surface   x86_64  build  
+F30-36 ACER Esquire x86_64 build  
 
+## ATTENTION:
+
+For a while, you need to sudo wifiscanner to get a full result from "iwlist scanning". iwlist executed as normal user does no longer give out a scanresult, it just tells you, were YOUR Wifi network is. 
